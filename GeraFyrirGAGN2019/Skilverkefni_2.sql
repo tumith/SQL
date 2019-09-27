@@ -1,4 +1,5 @@
 use Skilaverkefni_2;
+
 /* 1:
 	Smíðið trigger fyrir insert into Restrictors skipunina. 
 	Triggernum er ætlað að koma í veg fyrir að einhver áfangi sé undanfari eða samfari síns sjálfs. 
@@ -13,13 +14,19 @@ before update on Restrictors
 for each row
 	begin
 		declare msg varchar(255);
-        if (new.courseNumber = new.restrictorsID) then
-			set msg = concat('courseNumer er það sama og restrictorsID', cast(new.restrictorsID as char))
+        if (new.courseNumber = new.restrictorID) then
+			set msg = concat('courseNumer er það sama og restrictorsID', cast(new.restrictorID as char));
             signal sqlstate '45000' set message_text = msg;
+		end if;
             
 	end $$
 
-delimiter;
+delimiter ;
+drop table Restrictors;
+insert into Restrictors(courseNumber,restrictorID,restrictorType)
+values('GSF2A3U','GSF2A3U',1);
+
+select * from Restrictors;
 -- 2:
 -- Skrifið samskonar trigger fyrir update Restrictors skipunina.
 
