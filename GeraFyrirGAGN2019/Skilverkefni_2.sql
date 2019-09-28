@@ -8,8 +8,8 @@ use Skilaverkefni_2;
 	Dæmi um insert sem triggerinn á að stoppa: insert into Restrictors values('GSF2B3U','GSF2B3U',1);
 */
 delimiter $$
-drop trigger if exists trigger_name $$
-create trigger trigger_name
+drop trigger if exists viluboð $$
+create trigger viluboð
 before update on Restrictors
 for each row
 	begin
@@ -27,9 +27,11 @@ insert into Restrictors(courseNumber,restrictorID,restrictorType)
 values('GSF2A3U','GSF2A3U',1);
 
 select * from Restrictors;
+
 -- 2:
 -- Skrifið samskonar trigger fyrir update Restrictors skipunina.
-
+drop trigger if exists UpdateRestrictors $$
+after update on Restrictors;
 
 /*
 	3:
