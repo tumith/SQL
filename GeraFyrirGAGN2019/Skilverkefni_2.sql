@@ -30,8 +30,15 @@ select * from Restrictors;
 
 -- 2:
 -- Skrifið samskonar trigger fyrir update Restrictors skipunina.
+delimiter $$
 drop trigger if exists UpdateRestrictors $$
+create trigger UpdateRestrictors
 after update on Restrictors;
+for each row
+	begin
+    
+    end $$
+delimiter ;
 
 /*
 	3:
