@@ -8,9 +8,9 @@ use Skilaverkefni_2;
 	Dæmi um insert sem triggerinn á að stoppa: insert into Restrictors values('GSF2B3U','GSF2B3U',1);
 */
 delimiter $$
-drop trigger if exists viluboð $$
-create trigger viluboð
-before update on Restrictors
+drop trigger if exists villuboð $$
+create trigger villuboð
+before insert on Restrictors
 for each row
 	begin
 		declare msg varchar(255);
@@ -27,16 +27,21 @@ insert into Restrictors(courseNumber,restrictorID,restrictorType)
 values('GSF2A3U','GSF2A3U',1);
 
 select * from Restrictors;
+select * from villuboð;
 
 -- 2:
 -- Skrifið samskonar trigger fyrir update Restrictors skipunina.
 delimiter $$
 drop trigger if exists UpdateRestrictors $$
 create trigger UpdateRestrictors
-after update on Restrictors;
+after update on Restrictors
 for each row
 	begin
-    
+		declare msg varchar(255);
+        if (new.courseNumber = new.restrictorID) then
+			set msg = concat('courseNumer er það sama og restrictorsID', cast(new.restrictorID as char));
+            signal sqlstate '45000' set message_text = msg;
+		end if;
     end $$
 delimiter ;
 
