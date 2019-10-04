@@ -51,7 +51,12 @@ delimiter ;
     Birta skal fullt nafn nemanda, heiti námsbrautar og fjölda lokinna eininga(
 	Aðeins skal velja staðinn áfanga. passed = true
 */
+create procedure allarEiningar
+as
+select studentID,courseNumber,passed=true from Registration
+GO;
 
+execute allarEiningar;
 
 /*
 	4:
