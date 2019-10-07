@@ -51,12 +51,31 @@ delimiter ;
     Birta skal fullt nafn nemanda, heiti námsbrautar og fjölda lokinna eininga(
 	Aðeins skal velja staðinn áfanga. passed = true
 */
-create procedure allarEiningar
-as
-select studentID,courseNumber,passed=true from Registration
-GO;
+delimiter $$
+drop procedure if exists allarEiningar $$
+create procedure allarEiningar(SID int)
+begin
 
-execute allarEiningar;
+	select concat(firstName, " ", lastName) as name
+    from students
+    where studentID = SID
+    
+    union all
+    
+	select trackID as track
+    from Registration
+    where studentID = SID
+    
+    union all
+    
+    select count(courseNumber) as "Numerið af Courses"
+    from Registration
+    where studentID = SID;
+    
+end $$
+delimiter ;
+
+call allarEiningar(1);
 
 /*
 	4:
