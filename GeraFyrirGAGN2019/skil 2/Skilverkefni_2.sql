@@ -74,8 +74,8 @@ begin
     
 end $$
 delimiter ;
-
 call allarEiningar(1);
+
 
 /*
 	4:
@@ -86,4 +86,50 @@ call allarEiningar(1);
     skylduáfanga á nemandann.
     Að endingu skrifið þið stored procedure-inn StudentRegistration() sem nota skal við sjálfstæða skráningu áfanga nemandans.
 */
+delimiter $$
+drop procedure if exists AddStudent $$
+create procedure AddStudent(firstaNafn varchar(55), sinaNafn varchar(55), fDagur date, byrjunAnnar int, trackerID int)
+begin
+	insert into Students(firstName,lastName,dob,startSemester)values(firstaNafn, seinaNafn, fDagur, byrjunAnnar);
+    
+	set @SID = (select * from Students Order by id Desc Limit 1);
+    call AddMandatoryCourses(SID, trackerID);
+end $$
+delimiter ;
 
+delimiter $$
+drop procedure if exists AddMandatoryCourses $$
+create procedure AddMandatoryCourses(SID int, trackerID int)
+begin
+	
+	set @counter = 0;
+
+	while (select count(trackID) 
+    from trackcourses 
+    where mandatory && trackID = trackerID) >= counter
+	do
+		insert into Registration
+		(studentID,trackID,courseNumber,registrationDate,passed,semesterID)
+		values
+        (SID, trackerID, 
+			(select courseNumber
+			from trackID
+            order by courseNumber limit counter, 1),
+		GETDATE(),
+        false,
+			(select semester
+			from trackID
+            order by courseNumber limit counter, 1)
+        );
+        end while;
+end $$
+delimiter ;
+
+delimiter $$
+drop procedure if exists StudentRegistration $$
+create procedure StudentRegistration(SID int, trackerID int, courseNumer char(10), semID int)
+begin
+	insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)
+    values(SID, trackerID, courseNumer, GetDate(), false, semID);
+end $$
+delimiter ;
