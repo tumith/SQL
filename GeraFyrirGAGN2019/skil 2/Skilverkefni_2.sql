@@ -1,4 +1,4 @@
-use Skilaverkefni_2;
+use Skilaverkefni;
 
 /* 1:
 	Smíðið trigger fyrir insert into Restrictors skipunina. 

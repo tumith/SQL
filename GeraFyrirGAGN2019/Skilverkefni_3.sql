@@ -1,3 +1,5 @@
+use Skilaverkefni;
+@json NVARCHAR(max)
 /*
 1:
 	Skrifið stored procedure: StudentListJSon() sem notar cursor til að breyta vensluðum gögnum í JSon string.
@@ -20,7 +22,27 @@ delimiter $$
 drop procedure if exists StudentJSon $$
 create procedure StudentJSon()
 begin
-
+	insert into Students(
+	 studentID
+    ,firstName
+    ,lastName
+    ,dob
+    ,startSemester)
+    
+    select
+		 studentID
+        ,firstName
+        ,lastName
+        ,dob
+        ,startSemester
+	From Students
+    with(
+	    studentID int auto_increment
+       ,firstName varchar(55)
+	   ,lastName varchar(55)
+       ,dob date
+       ,startSemester int not null
+    ) AS jsonValues
 end $$
 delimiter ;
 

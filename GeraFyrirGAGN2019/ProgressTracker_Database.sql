@@ -1,13 +1,13 @@
-drop database if exists Skilaverkefni_2;
+drop database if exists Skilaverkefni;
 
-create database Skilaverkefni_2
+create database Skilaverkefni
 	default character set utf8
 	default collate utf8_general_ci;
 
 set default_storage_engine = innodb;
 set sql_mode = 'STRICT_ALL_TABLES';
 
-use Skilaverkefni_2;
+use Skilaverkefni;
 
 -- Semesters
 create table Semesters
