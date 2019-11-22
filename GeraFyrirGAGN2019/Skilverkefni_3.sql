@@ -21,28 +21,36 @@ delimiter $$
 drop procedure if exists StudentJSon $$
 create procedure StudentJSon()
 begin
-	declare done int default false;
+declare fn varchar(255);
+declare ln varchar(255);
+declare dob date;
+declare done int default false;
     declare nemendur longtext;
-    
-    declare cursorName
-		cursor for
-			select firstName,lastName,dob from Students;
-            
-	declare continue handler for not found set done = true;
-	
-    declare fn varchar(255);
-    declare ln varchar(255);
-    declare dob date;
-    
-	open cursorName;
-    
-    getcoursorName: loop
-		fetch cursorName into fn,ln,dob;
-        if done then leave getcoursorName;
-		end if;
-        set nemendur = nemendur + '{"first_name": "' + fn + '", "last_name": "' + ln + '", "date_of_birth": "' + dob + '"}';
-	end loop getcoursorName;
-    close cursorName;
+   
+    declare cursorName cursor 
+		for select Students.firstName, Students.lastName, Students.dob from Students;
+           
+declare continue handler for not found set done = true;
+set nemendur = '[';
+open cursorName;
+   
+    -- EKKI nota getcursorname.  Nota allsstaðar cursorName.
+    -- Og á meðan ég man:  cursorName er algerlaga glatað nafn á cusros :-)
+coursorName: loop
+fetch cursorName into fn,ln,dob;
+        if done then leave coursorName;
+end if;
+        -- Nota concat fallið til að setja saman JSon strenginn
+        set nemendur = concat(nemendur, '{"first_name": ','"', fn,'", ',
+										'"last_name": ','"', ln, '", ',
+                                        '"date_of_birth": ','"', dob, '"},');
+end loop;
+
+	set nemendur = trim(trailing ',' from nemendur);
+set nemendur = concat(nemendur,']');
+
+close cursorName;
+select nemendur;
 end $$
 delimiter ;
 call StudentJSon();
@@ -77,10 +85,38 @@ delimiter $$
 drop procedure if exists SingleStudentJSon $$
 create procedure SingleStudentJSon()
 begin
+declare cn varchar(255);
+declare st varchar(255);
+declare done int default false;
+    declare nemendur longtext;
+   
+    declare cursorName
+cursor for
+select Courses.courseNumber, Courses.courseCredits from Courses;
+
+declare continue handler for not found set done = true;
+set nemendur = '[';
+
+open cursorName;
+
+coursorName: loop
+fetch cursorName into cn,st;
+        if done then leave coursorName;
+end if;
+        -- Nota concat fallið til að setja saman JSon strenginn
+        set nemendur = concat(nemendur, '{"courseNumber": ','"', cn,'", ',
+                                        '"courseCredits": ','"', st, '"},');
+end loop;
+
+	set nemendur = trim(trailing ',' from nemendur);
+set nemendur = concat(nemendur,']');
+
+close cursorName;
+select nemendur;
 
 end $$
 delimiter ;
-
+call SingleStudentJSon();
 /*
 	3:
 	Skrifið stored procedure: SemesterInfoJSon() sem birtir uplýsingar um ákveðið semester.
@@ -99,8 +135,47 @@ delimiter $$
 drop procedure if exists SemesterInfoJSon $$
 create procedure SemesterInfoJSon()
 begin
+declare si int;
+declare fn varchar(255);
+declare ln varchar(255);
+declare ct int;
+
+declare done int default false;
+    
+    declare nemendur longtext;
+   
+    declare cursorName
+cursor for
+select Students.studentID, Students.firstName, Students.lastName, count(courseNumber) as number_of_courses
+from Students
+inner join Registration on Students.studentID = Registration.studentID
+and Registration.semesterID = semester_id
+group by Students.studentID;
+
+declare continue handler for not found set done = true;
+set nemendur = '[';
+
+open cursorName;
+
+coursorName: loop
+fetch cursorName into si,fn,ln,ct;
+        if done then leave coursorName;
+end if;
+        -- Nota concat fallið til að setja saman JSon strenginn
+        set nemendur = concat(nemendur, '{"student_id": ','"', si,'", ',
+										'"first_name": ','"', fn,'", ',
+                                        '"last_name": ','"', ln,'", ',
+                                        '"course_taken": ','"', ct, '"},');
+end loop;
+
+	set nemendur = trim(trailing ',' from nemendur);
+set nemendur = concat(nemendur,']');
+
+close cursorName;
+select nemendur;
 
 end $$
 delimiter ;
+call SemesterInfoJSon();
 -- ACHTUNG:  2 og 3 nota líka cursor!
 
