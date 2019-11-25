@@ -87,25 +87,36 @@ create procedure SingleStudentJSon()
 begin
 declare cn varchar(255);
 declare st varchar(255);
+declare pass bool;
 declare done int default false;
     declare nemendur longtext;
    
     declare cursorName
 cursor for
-select Courses.courseNumber, Courses.courseCredits from Courses;
+select Courses.courseNumber, Courses.courseCredits, Registration.passed
+from Courses
+join Registration on Courses.courseNumber = Registration.courseNumber;
 
 declare continue handler for not found set done = true;
 set nemendur = '[';
 
+select concat('"studentID": ','"', Students.studentID,'", ',
+			  '"firstName": ','"', Students.firstName,'", ',
+			  '"lastName": ','"', Students.lastName,'", ',
+              '"date_of_birth": ','"', Students.dob,'"},') into nemendur
+from Students
+where Students.studentID = 1;
+
 open cursorName;
 
 coursorName: loop
-fetch cursorName into cn,st;
+fetch cursorName into cn,st,pass;
         if done then leave coursorName;
 end if;
         -- Nota concat fallið til að setja saman JSon strenginn
         set nemendur = concat(nemendur, '{"courseNumber": ','"', cn,'", ',
-                                        '"courseCredits": ','"', st, '"},');
+										'"courseCredits": ','"', st,'", ',
+                                        '"status": ','"', pass, '"},');
 end loop;
 
 	set nemendur = trim(trailing ',' from nemendur);
@@ -149,7 +160,7 @@ cursor for
 select Students.studentID, Students.firstName, Students.lastName, count(courseNumber) as number_of_courses
 from Students
 inner join Registration on Students.studentID = Registration.studentID
-and Registration.semesterID = semester_id
+and Registration.semesterID = si
 group by Students.studentID;
 
 declare continue handler for not found set done = true;
