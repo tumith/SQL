@@ -1,13 +1,13 @@
-drop database if exists Skilaverkefni;
+drop database if exists ProgressTracker_V6;
 
-create database Skilaverkefni
+create database ProgressTracker_V6
 	default character set utf8
 	default collate utf8_general_ci;
 
 set default_storage_engine = innodb;
 set sql_mode = 'STRICT_ALL_TABLES';
 
-use Skilaverkefni;
+use ProgressTracker_V6;
 
 -- Semesters
 create table Semesters

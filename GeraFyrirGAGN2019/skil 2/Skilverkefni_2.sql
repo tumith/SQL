@@ -99,29 +99,20 @@ delimiter ;
 
 delimiter $$
 drop procedure if exists AddMandatoryCourses $$
-create procedure AddMandatoryCourses(SID int, trackerID int)
+create procedure AddMandatoryCourses(SID int, onn int)
 begin
 	
-	set @counter = 0;
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'STÆ103',curdate(),true,onn);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'EÐL103',curdate(),true,onn);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'STÆ203',curdate(),true,onn+1);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'EÐL203',curdate(),true,onn+1);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'STÆ303',curdate(),true,onn+2);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'GSF2A3U',curdate(),true,onn+2);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'FOR3G3U',curdate(),true,onn+3);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'GSF2B3U',curdate(),true,onn+3);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'GSF3B3U',curdate(),false,onn+4);
+insert into Registration(studentID,trackID,courseNumber,registrationDate,passed,semesterID)values(SID,9,'FOR3D3U',curdate(),false,onn+4);
 
-	while (select count(trackID) 
-    from trackcourses 
-    where mandatory && trackID = trackerID) >= counter
-	do
-		insert into Registration
-		(studentID,trackID,courseNumber,registrationDate,passed,semesterID)
-		values
-        (SID, trackerID, 
-			(select courseNumber
-			from trackID
-            order by courseNumber limit counter, 1),
-		GETDATE(),
-        false,
-			(select semester
-			from trackID
-            order by courseNumber limit counter, 1)
-        );
-        end while;
 end $$
 delimiter ;
 
